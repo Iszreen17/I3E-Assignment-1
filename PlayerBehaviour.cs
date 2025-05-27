@@ -28,6 +28,7 @@ public class PlayerBehaviour : MonoBehaviour
     bool canInteract = false;
     // Stores the current coin object the player has detected
     CoinBehaviour currentCoin = null;
+    DoorBehaviour currentDoor = null;
 
     // The Interact callback for the Interact Input Action
     // This method is called when the player presses the interact button
@@ -43,6 +44,11 @@ public class PlayerBehaviour : MonoBehaviour
                 // Call the Collect method on the coin object
                 // Pass the player object as an argument
                 currentCoin.Collect(this);
+            }
+            else if (currentDoor != null)
+            {
+                Debug.Log("Interacting with door");
+                currentDoor.Interact();
             }
         }
     }
@@ -101,6 +107,11 @@ public class PlayerBehaviour : MonoBehaviour
             // Get the CoinBehaviour component from the detected object
             canInteract = true;
             currentCoin = other.GetComponent<CoinBehaviour>();
+        }
+        else if (other.CompareTag("Door"))
+        {
+            canInteract = true;
+            currentDoor = other.GetComponent<DoorBehaviour>();
         }
     }
 
