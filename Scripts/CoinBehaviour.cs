@@ -5,7 +5,7 @@ public class CoinBehaviour : MonoBehaviour
     // Coin value that will be added to the player's score
     [SerializeField]
     int coinValue = 1;
-    
+
     // Method to collect the coin
     // This method will be called when the player interacts with the coin
     // It takes a PlayerBehaviour object as a parameter
@@ -15,7 +15,7 @@ public class CoinBehaviour : MonoBehaviour
     {
         // Logic for collecting the coin
         Debug.Log("Coin collected!");
-        
+
         // Add the coin value to the player's score
         // This is done by calling the ModifyScore method on the player object
         // The coinValue is passed as an argument to the method
@@ -23,5 +23,15 @@ public class CoinBehaviour : MonoBehaviour
         player.ModifyScore(coinValue);
 
         Destroy(gameObject); // Destroy the coin object
+    }
+
+    public void Highlight()
+    {
+        Debug.Log("Coin highlighted");
+    }
+
+    public void Unhighlight()
+    {
+        Debug.Log("Coin is unhighlighted");
     }
 }

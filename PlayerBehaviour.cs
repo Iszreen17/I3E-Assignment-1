@@ -1,4 +1,5 @@
 using UnityEngine;
+using TMPro;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -7,6 +8,51 @@ public class PlayerBehaviour : MonoBehaviour
     public Transform gunPoint;
 
     public float firePower;
+
+    [SerializeField]
+    Camera mainCamera;
+
+    [SerializeField]
+    TMP_Text scoreUI;
+
+    int score;
+
+
+    void Update()
+    {   
+        
+         RaycastHit hitInfo;
+        var cameraRay = mainCamera.ScreenPointToRay(new Vector3(mainCamera.pixelWidth / 2f , mainCamera.pixelHeight / 2f,0f));
+        Debug.DrawRay(cameraRay.origin, cameraRay.direction, Color.green);
+        if (Physics.Raycast(cameraRay, out hitInfo, 5f))
+        {
+            // do something when ray hit
+        }
+       
+        
+        Debug.DrawRay(gunPoint.position, gunPoint.forward * 5f, Color.red);
+        if (Physics.Raycast(gunPoint.position, gunPoint.forward, out hitInfo, 5f))
+        {
+            Debug.Log($"Hit: {hitInfo.collider.gameObject.name}");
+
+            if (hitInfo.collider.gameObject.CompareTag("Collectible"))
+            {
+                if (currentCoin != null)
+                {
+                    currentCoin.Unhighlight();
+                }
+
+                canInteract = true;
+                currentCoin = hitInfo.collider.gameObject.GetComponent<CoinBehaviour>();
+                currentCoin.Highlight();
+                
+            }
+        }
+        else if (currentCoin != null)
+        {
+            currentCoin.Unhighlight();
+        }
+    }
 
     void OnFire()
     {
@@ -44,6 +90,8 @@ public class PlayerBehaviour : MonoBehaviour
                 // Call the Collect method on the coin object
                 // Pass the player object as an argument
                 currentCoin.Collect(this);
+                score++;
+                scoreUI.text = $"{score}";
             }
             else if (currentDoor != null)
             {
@@ -107,6 +155,12 @@ public class PlayerBehaviour : MonoBehaviour
             // Get the CoinBehaviour component from the detected object
             canInteract = true;
             currentCoin = other.GetComponent<CoinBehaviour>();
+
+            if (currentCoin != null)
+            {
+                currentCoin.Highlight();
+            }
+            
         }
         else if (other.CompareTag("Door"))
         {
@@ -127,6 +181,7 @@ public class PlayerBehaviour : MonoBehaviour
                 // Set the canInteract flag to false
                 // Set the current coin to null
                 // This prevents the player from interacting with the coin
+                currentCoin.Unhighlight();
                 canInteract = false;
                 currentCoin = null;
             }
