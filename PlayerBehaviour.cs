@@ -4,70 +4,24 @@ using TMPro;
 public class PlayerBehaviour : MonoBehaviour
 {
 
-    public GameObject projectile;
-    public Transform gunPoint;
-
-    public float firePower;
-
-    [SerializeField]
-    Camera mainCamera;
-
     [SerializeField]
     TMP_Text scoreUI;
 
     int score;
 
+    public bool HasKey { get; set; } = false;
+
 
     void Update()
-    {   
-        
-         RaycastHit hitInfo;
-        var cameraRay = mainCamera.ScreenPointToRay(new Vector3(mainCamera.pixelWidth / 2f , mainCamera.pixelHeight / 2f,0f));
-        Debug.DrawRay(cameraRay.origin, cameraRay.direction, Color.green);
-        if (Physics.Raycast(cameraRay, out hitInfo, 5f))
-        {
-            // do something when ray hit
-        }
-       
-        
-        Debug.DrawRay(gunPoint.position, gunPoint.forward * 5f, Color.red);
-        if (Physics.Raycast(gunPoint.position, gunPoint.forward, out hitInfo, 5f))
-        {
-            Debug.Log($"Hit: {hitInfo.collider.gameObject.name}");
-
-            if (hitInfo.collider.gameObject.CompareTag("Collectible"))
-            {
-                if (currentCoin != null)
-                {
-                    currentCoin.Unhighlight();
-                }
-
-                canInteract = true;
-                currentCoin = hitInfo.collider.gameObject.GetComponent<CoinBehaviour>();
-                currentCoin.Highlight();
-                
-            }
-        }
-        else if (currentCoin != null)
-        {
-            currentCoin.Unhighlight();
-        }
-    }
-
-    void OnFire()
     {
-        Debug.Log("Fire!!");
-        var bullet = Instantiate(projectile, gunPoint.transform.position, projectile.transform.rotation);
-        var rigidbody = bullet.GetComponent<Rigidbody>();
-
-        var fireForce = transform.forward * firePower;
-        rigidbody.AddForce(fireForce);
 
     }
+
+
     // Player's maximum health
     int maxHealth = 100;
     // Player's current health
-    int currentHealth = 100;
+    int currentHealth = 50;
     // Player's current score
     int currentScore = 0;
     // Flag to check if the player can interact with objects
@@ -78,28 +32,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     // The Interact callback for the Interact Input Action
     // This method is called when the player presses the interact button
-    void OnInteract()
-    {
-        // Check if the player can interact with objects
-        if (canInteract)
-        {
-            // Check if the player has detected a coin or a door
-            if (currentCoin != null)
-            {
-                Debug.Log("Interacting with coin");
-                // Call the Collect method on the coin object
-                // Pass the player object as an argument
-                currentCoin.Collect(this);
-                score++;
-                scoreUI.text = $"{score}";
-            }
-            else if (currentDoor != null)
-            {
-                Debug.Log("Interacting with door");
-                currentDoor.Interact();
-            }
-        }
-    }
+
 
     // Method to modify the player's score
     // This method takes an integer amount as a parameter
@@ -131,18 +64,7 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    // Collision Callback for when the player collides with another object
-    void OnCollisionStay(Collision collision)
-    {
-        // Check if the player collides with an object tagged as "HealingArea"
-        // If it does, call the RecoverHealth method on the object
-        // Pass the player object as an argument
-        // This allows the player to recover health when in a healing area
-        if (collision.gameObject.CompareTag("HealingArea"))
-        {
-            collision.gameObject.GetComponent<RecoveryBehaviour>().RecoverHealth(this);
-        }
-    }
+
 
     // Trigger Callback for when the player enters a trigger collider
     void OnTriggerEnter(Collider other)
@@ -158,9 +80,9 @@ public class PlayerBehaviour : MonoBehaviour
 
             if (currentCoin != null)
             {
-                currentCoin.Highlight();
+                //currentCoin.Highlight();
             }
-            
+
         }
         else if (other.CompareTag("Door"))
         {
@@ -181,12 +103,31 @@ public class PlayerBehaviour : MonoBehaviour
                 // Set the canInteract flag to false
                 // Set the current coin to null
                 // This prevents the player from interacting with the coin
-                currentCoin.Unhighlight();
+                //currentCoin.Unhighlight();
                 canInteract = false;
                 currentCoin = null;
             }
         }
     }
+    
+   void OnInteract()
+{
+    if (canInteract)
+    {
+        if (currentCoin != null)
+        {
+            //currentCoin.Collect(this);
+            score++;
+            scoreUI.text = $"{score}";
+        }
+        else if (currentDoor != null)
+        {
+            currentDoor.Interact(this); // Pass this player object to the door
+        }
+    }
+}
+
+
 
     
 
