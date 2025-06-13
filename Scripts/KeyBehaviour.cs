@@ -3,22 +3,15 @@ using TMPro;
 
 public class KeyBehaviour : MonoBehaviour
 {
-    [SerializeField] DoorBehaviour MainDoor;
-    private void OnTriggerEnter(Collider other)
+    public Component doorcolliderhere;
+    public GameObject Keygone;
+
+    void OnTriggerStay()
     {
-        if (other.CompareTag("Player")) // ensure that it is the correct game object 
-        {
-            Debug.Log("Key is collected!");
-
-            PlayerBehaviour player = other.GetComponent<PlayerBehaviour>();
-            if (player != null)
-            {
-                player.HasKey = true; // Set key flag to true
-            }
-
-
-
-            Destroy(gameObject); // Remove key from scene
-        }
+        if (Input.GetKey(KeyCode.E))
+            doorcolliderhere.GetComponent<BoxCollider>().enabled = true;
+        
+        if (Input.GetKey(KeyCode.E))
+        Keygone.SetActive(false); // key to disappear after collecting
     }
 }
